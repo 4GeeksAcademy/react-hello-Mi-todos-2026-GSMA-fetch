@@ -93,3 +93,22 @@ ul::after {
   font-size: 20px;
   margin: 5px 10px;
 }
+
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid #ddd;        
+  border-top: 3px solid #f98cfb; 
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  margin-right: 10px;
+}
+
+/* animación */
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}

@@ -9,7 +9,7 @@ export const TodoList = () => {
   const [loading, setLoading] = useState(false);
   const [creating, setCreating] = useState(false);
 
-  const username = "Genesis";
+  const username = "genesis"; 
 
 
   const getTasks = async () => {
@@ -18,14 +18,11 @@ export const TodoList = () => {
       const resp = await fetch(
         `https://playground.4geeks.com/todo/users/${username}`
       );
-      const data = await resp.json(); 
+      const data = await resp.json();
 
-    console.log(" DATA DE LA API:", data); 
-
+      console.log("DATA DE LA API:", data);
 
       setTasks(data.todos || []);
-
-
     } catch (error) {
       console.log(error);
     } finally {
@@ -33,16 +30,16 @@ export const TodoList = () => {
     }
   };
 
- 
+
   const addTasks = async (e) => {
     if (e.key === "Enter") {
 
-      if (inputvalue === "") {
+      if (inputvalue.trim() === "") {
         setError("No puede estar vacío");
         return;
       }
 
-      if (inputvalue.length < 3) {
+      if (inputvalue.trim().length < 3) {
         setError("Debe tener al menos 3 caracteres");
         return;
       }
@@ -66,8 +63,8 @@ export const TodoList = () => {
 
         setInputvalue("");
         setError("");
-        await getTasks();
 
+        await getTasks();
       } catch (error) {
         console.log(error);
       } finally {
@@ -76,20 +73,52 @@ export const TodoList = () => {
     }
   };
 
- 
+
   const deleteTasks = async (id) => {
-    await fetch(
-      `https://playground.4geeks.com/todo/todos/${id}`,
-      {
-        method: "DELETE"
-      }
-    );
-    await getTasks();
+    try {
+      await fetch(
+        `https://playground.4geeks.com/todo/todos/${id}`,
+        {
+          method: "DELETE"
+        }
+    
+      );
+      console.log(deleteTasks);
+      
+
+      await getTasks();
+    } catch (error) {
+      console.log(error);
+    }
   };
+
 
   useEffect(() => {
     getTasks();
   }, []);
+    
+
+  const toggleTask = async (task) => {
+  try {
+    await fetch(
+      `https://playground.4geeks.com/todo/todos/${task.id}`,
+      {
+        method: "PUT",
+        body: JSON.stringify({
+          label: task.label,     
+          is_done: !task.is_done 
+        }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    );
+
+    await getTasks(); 
+  } catch (error) {
+    console.log(error);
+  }
+};
 
   return (
     <div className="container">
@@ -104,12 +133,18 @@ export const TodoList = () => {
 
       {error && <p className="error">{error}</p>}
 
-      {creating && <p className="item">Creando tarea...</p>}
-
+      {creating && (
+    <p className="item">
+      <span className="spinner"></span>
+      Creando tarea...
+  </p>
+)}
       {loading ? (
-        <p className="item">Cargando tareas...</p>
+        <p className="item">
+          <span className="spinner"></span>
+          Cargando tareas...</p>
       ) : (
-        <TaskList tasks={tasks} deleteTasks={deleteTasks} />
+        <TaskList tasks={tasks} deleteTasks={deleteTasks} toggleTask={toggleTask} />
       )}
 
       <p className="item">
