@@ -106,7 +106,7 @@ ul::after {
   margin-right: 10px;
 }
 
-/* animación */
+
 @keyframes spin {
   100% {
     transform: rotate(360deg);
